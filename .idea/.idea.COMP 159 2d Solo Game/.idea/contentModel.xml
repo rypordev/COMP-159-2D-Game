@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Ryan\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Ryan\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_COMP 159 2d Solo Game.-13998765.00" t="ExcludeRecursive" />
+    <e p="D:\Unity\COMP 159 2d Solo Game" t="IncludeRecursive">
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="Asset Store" t="Include">
+          <e p="Foggy Mountains Background" t="Include">
+            <e p="Demo" t="Include">
+              <e p="BackgroundHelper.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Muzzle" t="Include">
+            <e p="AnimatedTexture.cs" t="Include" />
+          </e>
+          <e p="SimpleAssets" t="Include">
+            <e p="Free Platform Game Assets" t="Include">
+              <e p="Readme.txt" t="Include" />
+            </e>
+          </e>
+          <e p="Skybox" t="Include">
+            <e p="Stylized Sky" t="Include">
+              <e p="Shaders" t="Include">
+                <e p="Stylized Sky.shader" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Scripts" t="Include">
+          <e p="GameManager.cs" t="Include" />
+          <e p="MuzzleFlash.cs" t="Include" />
+          <e p="PlayerController.cs" t="Include" />
+          <e p="RopeController.cs" t="Include" />
+          <e p="RopeSegment.cs" t="Include" />
+          <e p="VerletParticle.cs" t="Include" />
+        </e>
+      </e>
+      <e p="COMP 159 2d Solo Game.sln" t="IncludeFlat" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Packages" t="ExcludeRecursive" />
+      <e p="Temp\Bin" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>
