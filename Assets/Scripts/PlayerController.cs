@@ -6,23 +6,28 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private Camera camera;
+    [SerializeField] private Camera mainCamera;
     [Header("Gun")]
     [SerializeField] private RopeController ropeController;
     [SerializeField] private MuzzleFlash muzzleFlash;
     [SerializeField] private RectTransform gunPivot;
     [SerializeField] private LayerMask canHookTo;
     [SerializeField] private float playerRecoil;
+    [SerializeField] private float retractCooldown;
 
     private Rigidbody2D rb;
 
     private bool canFire;
+    private bool canRetract;
+
+    private Vector3 previousPlayerPos;
     
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         canFire = true;
+        canRetract = true;
     }
 
     // Update is called once per frame
@@ -30,15 +35,33 @@ public class PlayerController : MonoBehaviour
     {
         UpdateGunRot();
         
-        if (Input.GetKeyDown(KeyCode.Mouse0) && canFire)
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             Debug.Log("Left Mouse Pressed");
-            FireGun();
+            if (canFire)
+            {
+                FireGun();
+            }
+            else
+            {
+                ropeController.DeleteRope();
+                canFire = true;
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.Mouse1))
+        if (Input.GetKeyUp(KeyCode.Mouse0))
         {
+            Debug.Log("Releaseing Mouse");
+            StopCoroutine("ExtendRope");
+            ropeController.AttachPlayer();
+        }
+
+        //Debug.Log("Scroll: " + Input.mouseScrollDelta);
+        if (Input.GetKey(KeyCode.Mouse1) && canRetract)
+        {
+            canRetract = false;
             Retract();
+            StartCoroutine(RetractCooldown());
         }
     }
 
@@ -49,6 +72,12 @@ public class PlayerController : MonoBehaviour
         ropeController.Retract();
     }
 
+    private IEnumerator RetractCooldown()
+    {
+        yield return new WaitForSeconds(retractCooldown);
+        canRetract = true;
+    }
+
     #endregion
     
     #region FireGun
@@ -57,21 +86,35 @@ public class PlayerController : MonoBehaviour
         muzzleFlash.Play();
         
         ropeController.DeleteRope();
-        Vector2 gunDir = camera.ScreenToWorldPoint(Input.mousePosition) - gunPivot.position;
+        Vector2 gunDir = mainCamera.ScreenToWorldPoint(Input.mousePosition) - gunPivot.position;
         RaycastHit2D hit =  Physics2D.Raycast(gunPivot.position, gunDir, 200, canHookTo);
         if (hit.collider != null)
         {
             Debug.Log("Hit! : "+hit.transform.gameObject);
             ropeController.CreateRopeTo(hit.point);
+            canFire = false;
+
+            StartCoroutine("ExtendRope");
         }
         
         rb.AddForce(gunDir * -playerRecoil, ForceMode2D.Impulse);
     }
 
+    private IEnumerator ExtendRope()
+    {
+        while (true)
+        {
+            previousPlayerPos = transform.position;
+            yield return new WaitForSeconds(0.25f);
+            Vector3 currentPos = transform.position;
+            
+        }
+    }
+    
     private void UpdateGunRot()
     {
         Vector2 gunPivotPosition = gunPivot.position;
-        Vector2 mousePos = camera.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
         bool mouseIsRight = (mousePos.x > gunPivotPosition.x);
         gunPivot.localScale = new Vector3(mouseIsRight? 1:-1, 1, 1);

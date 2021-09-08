@@ -23,6 +23,22 @@ public class RopeController : MonoBehaviour
         segments = new List<RopeSegment>();
     }
 
+    public void Extend(bool connectPlayer)
+    {
+        Rigidbody2D previousLink = anchor;
+        if (segments.Count > 0)
+            previousLink = segments[segments.Count - 1].GetComponent<Rigidbody2D>();
+        
+        Vector3 pos = player.transform.position;
+        RopeSegment segment = Instantiate(ropeSegmentPrefab, pos, Quaternion.identity).GetComponent<RopeSegment>();
+        segment.SetSegmentLength(segmentsLength);
+        segment.Link(previousLink);
+        segments.Add(segment);
+
+        if (connectPlayer)
+            player.connectedBody = segment.GetComponent<Rigidbody2D>();
+    }
+    
     public void Retract()
     {
         if (segments.Count < 1)
@@ -39,7 +55,7 @@ public class RopeController : MonoBehaviour
     {
         //gizmoGunBarrel = gunBarrel.position;
         //gizmoTargetPos = pos;
-        Debug.Log("CREATING ROPE: Anchor - "+pos+ ",  Barrel - "+(Vector2)gunBarrel.position);
+        //Debug.Log("CREATING ROPE: Anchor - "+pos+ ",  Barrel - "+(Vector2)gunBarrel.position);
         //Set Anchor
         anchor.gameObject.SetActive(true);
         anchor.position = pos;
@@ -49,7 +65,7 @@ public class RopeController : MonoBehaviour
         int numSegments = Mathf.CeilToInt(ropeLength / segmentsLength) - 1;
         numSegments = Mathf.Clamp(numSegments, 0, int.MaxValue);
         
-        Debug.Log("RopeLength: "+ropeLength+", numSegs: "+numSegments+", ");
+        //Debug.Log("RopeLength: "+ropeLength+", numSegs: "+numSegments+", ");
 
         Vector2 gunToAnchor = anchor.position - (Vector2)gunBarrel.position;
         //gizmoAnchorToGun = gunToAnchor;
@@ -63,15 +79,22 @@ public class RopeController : MonoBehaviour
             previousLink = segment.GetComponent<Rigidbody2D>();
             segments.Add(segment);
         }
-
-        player.connectedBody = previousLink;
-        player.distance = gunToAnchor.magnitude + 0.1f;
-        player.enabled = true;
-
+        
         graphic.enabled = true;
     }
 
+    public void AttachPlayer()
+    {
+        Debug.Log("Segment Count: " + segments.Count);
+        player.connectedBody = segments.Count > 0 ? segments[segments.Count-1].GetComponent<Rigidbody2D>() : anchor;
+    }
+
     private void Update()
+    {
+        UpdateGraphic();
+    }
+
+    private void UpdateGraphic()
     {
         if (!graphic.enabled)
             return;

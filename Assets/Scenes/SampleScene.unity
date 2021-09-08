@@ -1215,7 +1215,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 960.00006, y: 0}
+  m_AnchoredPosition: {x: 960.0001, y: 0}
   m_SizeDelta: {x: 1920, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &819186155
@@ -1887,7 +1887,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bdb8390575920a4788c1109ac3d3863, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 519420031}
+  mainCamera: {fileID: 519420031}
   ropeController: {fileID: 1890827099}
   muzzleFlash: {fileID: 1106568767}
   gunPivot: {fileID: 1890827098}
@@ -1895,6 +1895,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 55
   playerRecoil: 20
+  retractCooldown: 0.05
 --- !u!232 &1106798458
 DistanceJoint2D:
   m_ObjectHideFlags: 0
