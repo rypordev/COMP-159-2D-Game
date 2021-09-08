@@ -16,6 +16,7 @@ public class RopeController : MonoBehaviour
     /*private Vector2 gizmoTargetPos;
     private Vector2 gizmoGunBarrel;
     private Vector2 gizmoAnchorToGun;
+    private Vector3 gizmoNewLength;
     */
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,30 @@ public class RopeController : MonoBehaviour
         segments = new List<RopeSegment>();
     }
 
+    public void InitialExtend()
+    {
+        Vector2 newPos = gunBarrel.position;
+        Rigidbody2D previousLink = anchor;
+        if (segments.Count > 0)
+            previousLink = segments[segments.Count - 1].GetComponent<Rigidbody2D>();
+
+        Vector2 newLength = newPos - previousLink.position;
+        //gizmoNewLength = newLength;
+        
+        int numSegments = Mathf.CeilToInt(newLength.magnitude / segmentsLength) - 1;
+        numSegments = Mathf.Clamp(numSegments, 0, int.MaxValue);
+        
+        for (int i = 0; i < numSegments; i++)
+        {
+            newLength -= newLength.normalized * segmentsLength;
+            RopeSegment segment = Instantiate(ropeSegmentPrefab, newLength + newPos, Quaternion.identity).GetComponent<RopeSegment>();
+            segment.SetSegmentLength(segmentsLength);
+            segment.Link(previousLink);
+            previousLink = segment.GetComponent<Rigidbody2D>();
+            segments.Add(segment);
+        }
+    }
+    
     public void Extend(bool connectPlayer)
     {
         Rigidbody2D previousLink = anchor;
@@ -87,6 +112,8 @@ public class RopeController : MonoBehaviour
     {
         Debug.Log("Segment Count: " + segments.Count);
         player.connectedBody = segments.Count > 0 ? segments[segments.Count-1].GetComponent<Rigidbody2D>() : anchor;
+        player.distance = segmentsLength;
+        player.enabled = true;
     }
 
     private void Update()
@@ -121,15 +148,16 @@ public class RopeController : MonoBehaviour
         graphic.enabled = false;
     }
 
-    /*private void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(gizmoGunBarrel, 0.1f);
+        //Gizmos.color = Color.cyan;
+        /*Gizmos.DrawSphere(gizmoGunBarrel, 0.1f);
         Gizmos.DrawSphere(gizmoTargetPos, 0.1f);
         Gizmos.DrawLine(gizmoGunBarrel, gizmoGunBarrel+gizmoAnchorToGun);
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(gizmoGunBarrel, gizmoAnchorToGun + gizmoGunBarrel);
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(gizmoGunBarrel, gizmoTargetPos - gizmoGunBarrel + gizmoGunBarrel);
-    }*/
+        Gizmos.DrawLine(gizmoGunBarrel, gizmoTargetPos - gizmoGunBarrel + gizmoGunBarrel);*/
+        //Gizmos.DrawLine(segments[segments.Count - 1].transform.position, segments[segments.Count - 1].transform.position - gizmoNewLength);
+    }
 }

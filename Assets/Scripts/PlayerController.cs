@@ -51,17 +51,24 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            Debug.Log("Releaseing Mouse");
+            Debug.Log("Releasing Mouse");
             StopCoroutine("ExtendRope");
             ropeController.AttachPlayer();
         }
 
         //Debug.Log("Scroll: " + Input.mouseScrollDelta);
-        if (Input.GetKey(KeyCode.Mouse1) && canRetract)
+        if (Input.GetKey(KeyCode.Mouse1))
         {
-            canRetract = false;
-            Retract();
-            StartCoroutine(RetractCooldown());
+            if (canRetract)
+            {
+                canRetract = false;
+                Retract();
+                StartCoroutine(RetractCooldown());
+            }
+            else if (Input.GetKey(KeyCode.LeftShift))
+            {
+                ropeController.Extend(true);
+            }
         }
     }
 
@@ -104,10 +111,8 @@ public class PlayerController : MonoBehaviour
     {
         while (true)
         {
-            previousPlayerPos = transform.position;
-            yield return new WaitForSeconds(0.25f);
-            Vector3 currentPos = transform.position;
-            
+            yield return new WaitForSeconds(0.05f);
+            ropeController.InitialExtend();
         }
     }
     
