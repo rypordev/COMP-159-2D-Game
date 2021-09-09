@@ -167,7 +167,7 @@ MonoBehaviour:
   ropeSegmentPrefab: {fileID: 700501738829691920, guid: c2a4762a5dd539b498295b5f7db9c450, type: 3}
   player: {fileID: 6274008949359901999}
   gunBarrel: {fileID: 6274008947518399358}
-  segmentsLength: 0.2
+  segmentsLength: 0.1
   anchor: {fileID: 0}
   graphic: {fileID: 6274008948575838473}
 --- !u!120 &6274008948575838473
@@ -189,7 +189,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 16a22c4184231413c847695c5989edff, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -344,7 +344,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: 34d7edc209cc0a44bbd2d515e290b5dc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3619cae5cf54544eebd6b693f41941ce, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -412,7 +412,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 55
   playerRecoil: 10
-  retractCooldown: 0.05
+  retractCooldown: 0.025
 --- !u!232 &6274008949359901999
 DistanceJoint2D:
   m_ObjectHideFlags: 0

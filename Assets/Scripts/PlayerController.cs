@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+/*
+ * IDEASSSSSSSSSSSSSSS
+ * FIRING ON THE ROPE???
+ * Rapelling to W/S, Right click to unhook
+ * Swap to spring joints
+ * Make rapelling faster the longer the rope is
+ */
 
 public class PlayerController : MonoBehaviour
 {
@@ -46,6 +53,9 @@ public class PlayerController : MonoBehaviour
             {
                 ropeController.DeleteRope();
                 canFire = true;
+                muzzleFlash.Play();
+                Vector2 gunDir = mainCamera.ScreenToWorldPoint(Input.mousePosition) - gunPivot.position;
+                rb.AddForce(gunDir * -playerRecoil, ForceMode2D.Impulse);
             }
         }
 
@@ -103,7 +113,6 @@ public class PlayerController : MonoBehaviour
 
             StartCoroutine("ExtendRope");
         }
-        
         rb.AddForce(gunDir * -playerRecoil, ForceMode2D.Impulse);
     }
 
