@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 700501738829691923}
   - component: {fileID: 3240281660164397470}
   - component: {fileID: 700501738829691926}
-  - component: {fileID: 700501738829691927}
+  - component: {fileID: 101592511}
   m_Layer: 7
   m_Name: RopeSegment
   m_TagString: Untagged
@@ -135,9 +135,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f15e328b8b127e43a58aeb01901a657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  joint: {fileID: 700501738829691927}
-  rb: {fileID: 0}
---- !u!232 &700501738829691927
+  joint: {fileID: 101592511}
+  rb: {fileID: 700501738829691922}
+--- !u!232 &101592511
 DistanceJoint2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -154,5 +154,5 @@ DistanceJoint2D:
   m_Anchor: {x: 0, y: 0}
   m_ConnectedAnchor: {x: 0, y: 0}
   m_AutoConfigureDistance: 0
-  m_Distance: 0.1
+  m_Distance: 2.6239283
   m_MaxDistanceOnly: 0

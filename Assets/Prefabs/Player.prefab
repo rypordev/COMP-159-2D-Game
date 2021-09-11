@@ -412,7 +412,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 55
   playerRecoil: 10
-  retractCooldown: 0.025
+  retractCooldown: 0.01
 --- !u!232 &6274008949359901999
 DistanceJoint2D:
   m_ObjectHideFlags: 0
