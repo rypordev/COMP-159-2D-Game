@@ -391,7 +391,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!114 &6274008949359901996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -412,7 +412,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 55
   playerRecoil: 10
-  retractCooldown: 0.01
+  retractCooldown: 0.1
+  isGrappled: 0
+  joint: {fileID: 6274008949359901999}
 --- !u!232 &6274008949359901999
 DistanceJoint2D:
   m_ObjectHideFlags: 0

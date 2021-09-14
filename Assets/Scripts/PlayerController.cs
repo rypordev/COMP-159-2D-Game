@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 /*
  * IDEASSSSSSSSSSSSSSS
  * FIRING ON THE ROPE???
- * Rapelling to W/S, Right click to unhook
- * Swap to spring joints
  * Make rapelling faster the longer the rope is
  */
 
@@ -24,19 +23,41 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    private bool canFire;
+    private bool isGrappled;
     private bool canRetract;
+    private bool reelingOut;
 
+    private Vector2 gunDir;
     private Vector3 previousPlayerPos;
+    [Header("Player")]
+    [SerializeField] private DistanceJoint2D joint;
     
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        canFire = true;
+        isGrappled = false;
         canRetract = true;
+        reelingOut = false;
     }
 
+    private void FixedUpdate()
+    {
+        if (joint.connectedBody is null)
+            return;
+        Vector2 connectedPos = joint.connectedBody.position;
+        Vector2 dir = (Vector2) transform.position - connectedPos;
+        Debug.Log(dir.magnitude);
+        if (dir.magnitude > joint.distance)
+        {
+            /*
+            * remove dir from rb. velocity
+            */
+
+            transform.position = connectedPos + dir.normalized * joint.distance;
+        }
+    }
+    
     // Update is called once per frame
     void Update()
     {
@@ -44,30 +65,33 @@ public class PlayerController : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            Debug.Log("Left Mouse Pressed");
-            if (canFire)
-            {
+            muzzleFlash.Play();
+            ApplyRecoil();
+            if(!isGrappled)
                 FireGun();
-            }
-            else
-            {
-                ropeController.DeleteRope();
-                canFire = true;
-                muzzleFlash.Play();
-                Vector2 gunDir = mainCamera.ScreenToWorldPoint(Input.mousePosition) - gunPivot.position;
-                rb.AddForce(gunDir * -playerRecoil, ForceMode2D.Impulse);
-            }
         }
 
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
             Debug.Log("Releasing Mouse");
             StopCoroutine("ExtendRope");
-            ropeController.AttachPlayer();
+            if (reelingOut)
+            {
+                ropeController.InitialExtend();
+                ropeController.AttachPlayer();
+            }
+
+            reelingOut = false;
         }
 
-        //Debug.Log("Scroll: " + Input.mouseScrollDelta);
-        if (Input.GetKey(KeyCode.Mouse1))
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            StopCoroutine("ExtendRope");
+            ropeController.DeleteRope();
+            isGrappled = false;
+        }
+
+        if (Input.GetKey(KeyCode.W) && isGrappled)
         {
             if (canRetract)
             {
@@ -75,9 +99,14 @@ public class PlayerController : MonoBehaviour
                 Retract();
                 StartCoroutine(RetractCooldown());
             }
-            else if (Input.GetKey(KeyCode.LeftShift))
+        }
+        if (Input.GetKey(KeyCode.S) && isGrappled)
+        {
+            if (canRetract)
             {
+                canRetract = false;
                 ropeController.Extend(true);
+                StartCoroutine(RetractCooldown());
             }
         }
     }
@@ -100,19 +129,21 @@ public class PlayerController : MonoBehaviour
     #region FireGun
     private void FireGun()
     {
-        muzzleFlash.Play();
-        
         ropeController.DeleteRope();
-        Vector2 gunDir = mainCamera.ScreenToWorldPoint(Input.mousePosition) - gunPivot.position;
         RaycastHit2D hit =  Physics2D.Raycast(gunPivot.position, gunDir, 200, canHookTo);
         if (hit.collider != null)
         {
             Debug.Log("Hit! : "+hit.transform.gameObject);
-            ropeController.CreateRopeTo(hit.point);
-            canFire = false;
+            ropeController.CreateRopeTo(hit.point, hit.transform);
+            isGrappled = true;
+            reelingOut = true;
 
             StartCoroutine("ExtendRope");
         }
+    }
+
+    private void ApplyRecoil()
+    {
         rb.AddForce(gunDir * -playerRecoil, ForceMode2D.Impulse);
     }
 
@@ -139,6 +170,7 @@ public class PlayerController : MonoBehaviour
             angle += 180;
         
         gunPivot.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+        gunDir = mainCamera.ScreenToWorldPoint(Input.mousePosition) - gunPivot.position;
     }
     #endregion 
 }

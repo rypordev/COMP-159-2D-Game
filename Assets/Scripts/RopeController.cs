@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class RopeController : MonoBehaviour
 {
@@ -22,6 +24,14 @@ public class RopeController : MonoBehaviour
     void Start()
     {
         segments = new List<RopeSegment>();
+    }
+
+    private void FixedUpdate()
+    {
+        foreach (var segment in segments)
+        {
+            segment.RestrictJointDistance();
+        }
     }
 
     public void InitialExtend()
@@ -76,14 +86,15 @@ public class RopeController : MonoBehaviour
         Destroy(toDelete.gameObject);
     }
 
-    public void CreateRopeTo(Vector2 pos)
+    public void CreateRopeTo(Vector2 pos, Transform hitObject)
     {
         //gizmoGunBarrel = gunBarrel.position;
         //gizmoTargetPos = pos;
         //Debug.Log("CREATING ROPE: Anchor - "+pos+ ",  Barrel - "+(Vector2)gunBarrel.position);
         //Set Anchor
         anchor.gameObject.SetActive(true);
-        anchor.position = pos;
+        anchor.transform.position = pos;
+        anchor.transform.parent = hitObject;
         
         //Create rope segments - 1, because player is last segment
         float ropeLength = ((Vector2) gunBarrel.position - pos).magnitude;
@@ -92,7 +103,7 @@ public class RopeController : MonoBehaviour
         
         //Debug.Log("RopeLength: "+ropeLength+", numSegs: "+numSegments+", ");
 
-        Vector2 gunToAnchor = anchor.position - (Vector2)gunBarrel.position;
+        Vector2 gunToAnchor = (Vector2)anchor.transform.position - (Vector2)gunBarrel.position;
         //gizmoAnchorToGun = gunToAnchor;
         Rigidbody2D previousLink = anchor;
         for (int i = 0; i < numSegments; i++)
